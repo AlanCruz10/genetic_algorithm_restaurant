@@ -1,0 +1,86 @@
+Name,Rating,Reservations,Frequency ,Evaluation,Location,Food
+Cockteles y Mariscos El Bucanero,"4,50",6,6,"4,6",Tuxtla Gutierrez,Pizza
+La Mansion 516,"1,42",0,2,"0,65",Tuxtla Gutierrez,Ensalada
+Asador Castellano,"2,99",12,11,"3,54",Tuxtla Gutierrez,Tofu
+Otilia,"1,54",17,14,"3,97",Tuxtla Gutierrez,Tofu
+Balam a Las Brasas,"1,39",20,5,"0,97",Tuxtla Gutierrez,Carnitas
+San Juan Leñero Asador,"0,39",2,71,"1,37",Tuxtla Gutierrez,Carnitas
+La Valentina,"2,91",7,2,"2,33",Tuxtla Gutierrez,Pescado
+Oa’xaka,"3,19",19,89,"0,62",Tuxtla Gutierrez,Mariscos
+Banderas Steak House,"4,27",12,19,"2,22",Tuxtla Gutierrez,Barbacoa
+Capriccio Divino,"2,92",7,57,"2,06",Tuxtla Gutierrez,Tofu
+Sarajevo Café Jardín,"1,68",10,46,"4,27",San Cristobal de las Casas ,Sopa
+Kinoki,"3,78",9,74,"3,50",San Cristobal de las Casas ,Carnitas
+Malaak al Horno,"3,70",8,18,"3,08",San Cristobal de las Casas ,Mariscos
+Tacos y Carnes Los Revolcados,"3,31",9,48,"2,21",San Cristobal de las Casas ,Pescado
+Nana Kutsi,"2,38",20,17,"2,65",San Cristobal de las Casas ,Curry
+Fátima17 Restaurante,"0,86",9,2,"1,47",San Cristobal de las Casas ,Pescado
+Fragola,"3,08",4,4,"4,37",San Cristobal de las Casas ,Pescado
+Naranja Central,"2,13",7,69,"1,41",San Cristobal de las Casas ,Sopa
+Veganos la Taquería,"0,18",18,15,"3,30",San Cristobal de las Casas ,Pizza
+Taniperla,"0,63",11,25,"1,46",San Cristobal de las Casas ,Fajitas
+Monte Verde Trattoria Pizzeria Italiana,"4,86",14,3,"4,06",Palenque,Pollo asado
+Restaurante Maya Cañada,"4,34",11,16,"3,15",Palenque,Pollo asado
+Restaurante Zanate Bar,"0,15",11,2,"1,27",Palenque,Carnitas
+Bajlum,"3,30",0,67,"1,34",Palenque,Arroz con pollo
+Restaurante El Centenario,"3,11",19,75,"3,98",Cintalapa,Arroz con pollo
+Azul Cielo Restaurante,"2,77",16,18,"1,92",Cintalapa,Carnitas
+Restaurant El Camarón Arrecho,"0,45",8,22,"0,56",Cintalapa,Pollo asado
+El Recuerdo,"2,67",5,16,"4,16",Cintalapa,Carnitas
+Ta Bonitío,"4,44",7,74,"1,75",Comitán,Sushi
+Sabores de Comitán,"4,52",3,89,"0,60",Comitán,Pollo asado
+Casa Nevarez,"0,41",12,55,"4,83",Comitán,Tacos
+Caoh,"1,65",4,69,"3,31",Comitán,Parrillada
+La Comiteca 1948,"2,92",4,22,"3,21",Comitán,Sopa
+LaLiLu,"2,72",6,19,"4,55",Comitán,Tacos
+La Esquina de Belisario,"2,16",5,5,"1,76",Comitán,Arroz con pollo
+Pizzería La Albahaca,"1,30",1,23,"1,84",Comitán,Empanadas
+El Sazón Comiteco Restaurant & Cenaduria,"3,74",7,37,"1,08",Comitán,Parrillada
+Restaurante Camino Secreto Marisquería,"2,64",2,31,"2,19",Comitán,Pollo asado
+El Picantito,"1,87",10,3,"0,60",Coita,Barbacoa
+Toni’s Taqueria,"4,49",7,4,"4,82",Coita,Parrillada
+Gorditas PACMAN,"1,65",3,66,"1,45",Coita,Sándwiches
+Cruz del Llano,"4,25",3,100,"3,67",Coita,Arroz con pollo
+ALETZA Ramen-Sushi-Snacks,"1,55",12,23,"4,92",Coita,Sándwiches
+Real Campestre Restaurant Familiar,"2,49",18,18,"2,72",Coita,Pizza
+La Cletta,"3,64",13,9,"4,29",Coita,Hamburguesas
+Tiobokki,"1,59",9,32,"4,00",Coita,Fajitas
+Pastelería Yireh,"1,13",4,11,"3,77",Coita,Hamburguesas
+Checo’s Pizzas,"1,75",8,30,"1,11",Coita,Pizza
+El Grajo,"4,28",1,37,"1,35",Tonalá,Hamburguesas
+Ahogadas Julio’s,"1,58",4,66,"0,93",Tonalá,Parrillada
+Mariscos Rafa,"2,27",3,35,"2,57",Tonalá,Hamburguesas
+El Filete Grill,"5,00",13,28,"1,11",Tonalá,Barbacoa
+La Cueva Del Nagual,"3,54",3,99,"3,83",Tonalá,Tofu
+Mariscos El Charro,"1,24",9,19,"0,13",Tonalá,Empanadas
+El Alazan y El Rosillo,"4,07",9,64,"0,65",Tonalá,Pescado
+Cinquecento Pizzeria,"3,30",5,2,"3,32",Tonalá,Pollo asado
+Mezquite Grill,"4,29",8,36,"4,85",Tonalá,Tofu
+Los Cocos Locos,"0,27",19,26,"3,73",Tonalá,Pescado
+El Campanario Restaurant,"3,63",17,16,"1,11",Chiapa de Corzo,Barbacoa
+LA SELVA,"1,57",4,42,"2,41",Chiapa de Corzo,Empanadas
+Jardínes de Chiapa Restaurante,"4,67",0,56,"1,61",Chiapa de Corzo,Barbacoa
+Villa Crepas,"3,52",14,7,"0,14",Chiapa de Corzo,Pescado
+Restaurant Continental,"3,06",18,10,"0,38",Huixtla,Curry
+KALAMARÍN,"3,90",15,18,"1,37",Huixtla,Barbacoa
+Casa Rosa,"2,96",6,3,"0,70",Huixtla,Parrillada
+Restaurante el BAMBU,"3,96",6,21,"2,72",Tapilula,Sushi
+Restaurante El Tio Napo,"3,70",18,18,"2,86",Tapilula,Tofu
+Restaurante Familiar El Yumbo,"0,59",3,34,"2,18",Tapilula,Ceviche
+Restaurante las quesadillas,"3,65",4,16,"4,01",Tapilula,Sopa
+Z'evia,"2,96",20,23,"3,79",Tapilula,Empanadas
+Restaurante La Palma,"2,17",10,16,"3,36",Solosuchiapa,Pizza
+Antojitos Konny,"1,73",4,42,"2,43",Solosuchiapa,Pasta
+Cocina Economica El Plebe,"0,05",9,24,"3,11",Solosuchiapa,Curry
+Restaurante La Parroquia,"4,03",4,25,"4,95",Solosuchiapa,Carnitas
+Cocína económica Laly,"2,90",4,47,"0,20",Solosuchiapa,Parrillada
+Taquitos Casa Blanca,"1,73",16,25,"4,06",Tuxtla Gutierrez,Tacos
+Las Pichanchas,"0,38",12,6,"2,19",Tuxtla Gutierrez,Hamburguesas
+Los Helechos,"0,47",7,48,"4,74",Tuxtla Gutierrez,Hamburguesas
+IHOP Tuxtla,"1,15",6,25,"1,29",Tuxtla Gutierrez,Curry
+La Calabaza Encantada,"4,22",7,12,"1,36",Tuxtla Gutierrez,Curry
+El Rincon De Josefina,"0,25",3,18,"0,84",Tuxtla Gutierrez,Mariscos
+Rizo Coctelerias,"0,47",19,8,"2,13",Tuxtla Gutierrez,Barbacoa
+La MI AMOR “Cocina con barrio”,"0,47",19,41,"0,47",Tuxtla Gutierrez,Carnitas
+Senorial Restaurant,"2,08",3,50,"2,82",Tuxtla Gutierrez,Sopa
+Chiquitita,"2,11",15,18,"4,19",Tuxtla Gutierrez,Parrillada
