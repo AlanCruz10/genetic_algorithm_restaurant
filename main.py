@@ -2,10 +2,60 @@ import random
 import time
 import math
 import numpy as np
+from geopy.geocoders import Nominatim
 from genetic_algorithm import generic_algorithm
 import csv
 import requests
-from credentials.google_maps.credentials.api_key import API_KEY
+from configurations.google_maps.credentials.api_key import API_KEY
+from configurations.geopy.credentials.user_agent import USER_AGENT
+
+
+def read_data():
+    list_restaurants = {}
+    with open('restaurantes chiapas.csv', newline='', encoding='utf-8') as archivo_csv:
+        lector_csv = csv.reader(archivo_csv)
+        for i, fila in enumerate(lector_csv):
+            if i != 0:
+                list_restaurants.append({
+                    "id": i - 1,
+                    "name": fila[0],
+                    "rating": float(fila[1].replace(",", ".")),
+                    "reservations": int(fila[2]),
+                    "frequency": int(fila[3]),
+                    "evaluation": float(fila[4].replace(",", ".")),
+                    "location": fila[5],
+                    "food": fila[6]
+                })
+    return list_restaurants
+
+
+def mutation(children, prob_mut_gen, prob_mut_ind, list_restaurants, geolocation, geolocation_municipality, type_food):
+    for son in children:
+        # check the probability of mutation of the individual that is better than prob_mut_ind
+        if round(random.uniform(0, 1.0001), 4) >= prob_mut_ind:
+            fitness = 0
+            for restaurant in son["restaurants"]:
+                # check the probability of mutation of each restaurant that is better than prob_mut_gen
+                if round(random.uniform(0, 1.0001), 4) >= prob_mut_gen:
+                    repeated = False
+                    # repeat the process if present in son["restaurants"]
+                    while not repeated:
+                        # obtained one restaurant randomly
+                        rest = random.sample(list_restaurants, 1)[0]
+                        # added fitness individual and distance in km
+                        rest["fitness_individual"], rest["distance_km"] = individual_evaluation_function(rest, geolocation, geolocation_municipality, type_food, list_restaurants)
+                        # checked that restaurant of db not present in son["restaurants"]
+                        if rest not in son["restaurants"]:
+                            repeated = True
+                            restaurant.update(rest)
+                fitness += restaurant["fitness_individual"]
+            # update fitness of individual (son) and the list of restaurants of son (son["restaurants"])
+            son.update({
+                "fitness": fitness,
+                "restaurants": son["restaurants"]
+            })
+    # returned the children mutated
+    return children
 
 
 def cross(couples):
@@ -80,7 +130,7 @@ def individual_evaluation_function(restaurant, geolocation, geolocation_municipa
     rating = (restaurant["rating"] - 0) / (5 - 0)
     reservations = (restaurant["reservations"] - min_reservations) / (max_reservations - min_reservations)
     frequency = (restaurant["frequency"] - min_frequency) / (max_frequency - min_frequency)
-    localization = get_localization_by_municipality(restaurant["location"])
+    localization = get_localization_by_municipality_using_geopy(restaurant["location"])
     if localization["status"]:
         if geolocation["status"]:
             # normalization from distance with logarithmic transformation
@@ -151,9 +201,13 @@ def gar(list_restaurants, geolocation, geolocation_municipality, type_food, init
             couples = generation_couples(population_copy, prob_cross)
             print_list(couples)
             # making crosses
-            crosses = cross(couples)
+            children = cross(couples)
             print("cross")
-            print_list(crosses)
+            print_list(children)
+            # do mutation
+            children_mutated = mutation(children, prob_mut_gen, prob_mut_ind, list_restaurants, geolocation, geolocation_municipality, type_food)
+            print("mutation")
+            print_list(children_mutated)
 
 
 def get_localization_by_municipality(municipality):
@@ -183,6 +237,30 @@ def get_localization_by_municipality(municipality):
     return geolocation_municipality
 
 
+def get_localization_by_municipality_using_geopy(municipality):
+    geolocator = Nominatim(user_agent=USER_AGENT)
+    geolocation_municipality = {}
+    success = False
+    attempts = 0
+    while not success and attempts < 5:
+        try:
+            location = geolocator.geocode(municipality)
+            if location:
+                geolocation_municipality["address"] = location.address
+                geolocation_municipality["lat"] = location.latitude
+                geolocation_municipality["lng"] = location.longitude
+                geolocation_municipality["status"] = True
+                success = True
+            else:
+                print("Error al obtener la información del municipio.")
+                geolocation_municipality["status"] = False
+                success = True
+        except Exception:
+            geolocation_municipality["status"] = False
+            attempts += 1
+    return geolocation_municipality
+
+
 if __name__ == '__main__':
     geolocation = {}
     list_restaurants = []
@@ -195,7 +273,9 @@ if __name__ == '__main__':
             if fila[0] == "Tuxtla Gutiérrez":
                 municipality = fila[0]
 
-    geolocation_municipality = get_localization_by_municipality(municipality)
+    # geolocation_municipality = get_localization_by_municipality(municipality)
+
+    geolocation_municipality = get_localization_by_municipality_using_geopy(municipality)
 
     # ip_public
     response = requests.get('https://api.ipify.org?format=json')
@@ -237,6 +317,7 @@ if __name__ == '__main__':
                     type_food = fila[6]
 
     print(geolocation_municipality)
+    # print(geolocation_municipality_by_geopy)
     print(geolocation)
 
     gar(list_restaurants, geolocation, geolocation_municipality, type_food, 10, 3, 5, 0.25, 0.20, 0.35, 10, "max")
