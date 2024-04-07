@@ -1,15 +1,56 @@
 import random
 import time
 import math
+import numpy as np
 from genetic_algorithm import generic_algorithm
 import csv
 import requests
 from credentials.google_maps.credentials.api_key import API_KEY
 
 
+def cross(couples):
+    children = []
+    for (fc, sc) in couples:
+        # point cross random
+        point_cross = random.randint(0, len(fc))
+        # do cross
+        list_restaurants_fc = fc["restaurants"][:point_cross] + sc["restaurants"][point_cross:]
+        list_restaurants_sc = sc["restaurants"][:point_cross] + fc["restaurants"][point_cross:]
+        # update fitness global with new crosses
+        fitness_fc = sum(restaurant["fitness_individual"] for restaurant in list_restaurants_fc)
+        fitness_sc = sum(restaurant["fitness_individual"] for restaurant in list_restaurants_sc)
+        # add sons to list children
+        children.append({
+            "fitness":fitness_fc,
+            "restaurants":list_restaurants_fc
+        })
+        children.append({
+            "fitness": fitness_sc,
+            "restaurants": list_restaurants_sc
+        })
+    return children
+
+
+def generation_couples(population, prob_cross):
+    # population sorted from least to most fitness
+    sorted_population = sorted(population, key=lambda x: x['fitness'])
+    # population partitioning
+    index_separation = len(sorted_population) - len(sorted_population) // 2
+    first_part = sorted_population[:index_separation]
+    second_part = sorted_population[index_separation:]
+    # forming couples
+    couples = []
+    for fp in first_part:
+        for sp in second_part:
+            couples.append((fp, sp))
+    return couples
+
+
 def calculate_distance(lat_rest, lng_rest, lat_person, lng_person):
+        # earth radius in kilometers
         R = 6371
 
+        # haversine formula
         phi1 = math.radians(lat_rest)
         phi2 = math.radians(lat_person)
         delta_phi = math.radians(lat_person - lat_rest)
@@ -22,6 +63,7 @@ def calculate_distance(lat_rest, lng_rest, lat_person, lng_person):
 
 
 def individual_evaluation_function(restaurant, geolocation, geolocation_municipality, type_food, list_restaurants):
+    # weights
     weight_evaluation = 0.2
     weight_rating = 0.2
     weight_reservations = 0.17
@@ -29,6 +71,7 @@ def individual_evaluation_function(restaurant, geolocation, geolocation_municipa
     weight_location_indeterminate = 0.16 / 2
     weight_food = 0.135
     weight_frequency = 0.135
+    # standardization from data
     min_reservations = min(rest["reservations"] for rest in list_restaurants)
     min_frequency = min(rest["frequency"] for rest in list_restaurants)
     max_reservations = max(rest["reservations"] for rest in list_restaurants)
@@ -40,43 +83,38 @@ def individual_evaluation_function(restaurant, geolocation, geolocation_municipa
     localization = get_localization_by_municipality(restaurant["location"])
     if localization["status"]:
         if geolocation["status"]:
-            distance = weight_location * calculate_distance(localization["lat"], localization["lng"],
-                                                            geolocation["lat"], geolocation["lng"])
+            # normalization from distance with logarithmic transformation
+            distance_km = calculate_distance(localization["lat"], localization["lng"], geolocation["lat"], geolocation["lng"])
+            distance_calculated = np.log(distance_km + 1)
+            distance = weight_location * distance_calculated
         elif geolocation_municipality["status"]:
-            distance = weight_location * calculate_distance(localization["lat"], localization["lng"],
-                                                            geolocation_municipality["lat"],
-                                                            geolocation_municipality["lng"])
+            # normalization from distance with logarithmic transformation
+            distance_km = calculate_distance(localization["lat"], localization["lng"], geolocation["lat"], geolocation["lng"])
+            distance_calculated = np.log(distance_km + 1)
+            distance = weight_location * distance_calculated
         else:
+            distance_km = None
             distance = 0
     else:
-        distance = weight_location_indeterminate * -1
+        distance_km = None
+        distance = -1 * weight_location_indeterminate
 
     if restaurant["food"] != type_food:
         weight_food = 0
-    return weight_evaluation * evaluation + weight_rating * rating + weight_reservations * reservations + distance + weight_food + weight_frequency * frequency
-
-
-# def create_individual(i, restaurant):
-#     return {
-#         "id": i,
-#         "name": restaurant[0],
-#         "rating": restaurant[1],
-#         "reservations": restaurant[2],
-#         "frequency": restaurant[3],
-#         "evaluation": restaurant[4],
-#         "location": restaurant[5],
-#         "food": restaurant[6]
-#     }
+    # return weighted sum and distance in km
+    return weight_evaluation * evaluation + weight_rating * rating + weight_reservations * reservations + distance + weight_food + weight_frequency * frequency, distance_km
 
 
 def generate_initial_population(list_restaurants, initial_population, recommendations, geolocation,
                                 geolocation_municipality, type_food):
     recommendation = []
     while len(recommendation) < initial_population:
+        # list from 3 restaurants unique random
         list_restaurants_recommended = random.sample(list_restaurants, recommendations)
+        # fitness global, individual and distance in km added
         fitness = 0
         for restaurant in list_restaurants_recommended:
-            restaurant["fitness_individual"] = individual_evaluation_function(restaurant, geolocation,
+            restaurant["fitness_individual"], restaurant["distance_km"] = individual_evaluation_function(restaurant, geolocation,
                                                                               geolocation_municipality,
                                                                               type_food,
                                                                               list_restaurants)
@@ -85,17 +123,37 @@ def generate_initial_population(list_restaurants, initial_population, recommenda
             "fitness": fitness,
             "restaurants": list_restaurants_recommended[:]
         }
+        # add if not is present before
         if individual not in recommendation:
             recommendation.append(individual)
         list_restaurants_recommended.clear()
     return recommendation
 
 
+def print_list(list_rest):
+    for r in list_rest:
+        print(r)
+
+
 def gar(list_restaurants, geolocation, geolocation_municipality, type_food, init_population, recommendations,
-        max_population,
-        prob_mut_gen, prob_mut_ind, iterations, opt):
-    print(generate_initial_population(list_restaurants, init_population, recommendations, geolocation,
-                                geolocation_municipality, type_food))
+        max_population, prob_cross, prob_mut_gen, prob_mut_ind, iterations, opt):
+    population_by_generation = {}
+    # generate initial population
+    population = generate_initial_population(list_restaurants, init_population, recommendations, geolocation,
+                                             geolocation_municipality, type_food)
+    print_list(population)
+    population_by_generation[0] = population
+    population_copy = population
+    for i in range(iterations):
+        if len(population_copy) > 1:
+            # generate couples
+            print("couples")
+            couples = generation_couples(population_copy, prob_cross)
+            print_list(couples)
+            # making crosses
+            crosses = cross(couples)
+            print("cross")
+            print_list(crosses)
 
 
 def get_localization_by_municipality(municipality):
@@ -134,7 +192,7 @@ if __name__ == '__main__':
     with open('municipios.csv', newline='', encoding='utf-8') as archivo_csv:
         lector_csv = csv.reader(archivo_csv)
         for fila in lector_csv:
-            if fila[0] == "Tonalá":
+            if fila[0] == "Tuxtla Gutiérrez":
                 municipality = fila[0]
 
     geolocation_municipality = get_localization_by_municipality(municipality)
@@ -181,4 +239,4 @@ if __name__ == '__main__':
     print(geolocation_municipality)
     print(geolocation)
 
-    gar(list_restaurants, geolocation, geolocation_municipality, type_food, 10, 3, 5, 0.25, 0.35, 50, "max")
+    gar(list_restaurants, geolocation, geolocation_municipality, type_food, 10, 3, 5, 0.25, 0.20, 0.35, 10, "max")
