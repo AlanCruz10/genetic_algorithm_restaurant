@@ -1,9 +1,8 @@
 import random
 import time
 import math
-import numpy as np
 from geopy.geocoders import Nominatim
-from genetic_algorithm import generic_algorithm
+# from genetic_algorithm import generic_algorithm
 import csv
 import requests
 from configurations.google_maps.credentials.api_key import API_KEY
@@ -29,11 +28,60 @@ def read_data():
     return list_restaurants
 
 
+def pruning(population, best, max_population):
+    # deleted repeats
+    key_unique = set()
+    population_unique = []
+    for individual in population:
+        restaurants_tuple = tuple(tuple(restaurant.items()) for restaurant in individual["restaurants"])
+        if restaurants_tuple not in key_unique:
+            key_unique.add(restaurants_tuple)
+            population_unique.append(individual)
+    # check that the size of the list population_unique is less than the max_population
+    while len(population_unique) > max_population:
+        # pruning maintaining the best
+        population_pruned = []
+        for individual in population_unique:
+            if individual != best:
+                if round(random.uniform(0, 1.0001), 4) < 0.5:
+                    population_pruned.append(individual)
+        population_pruned.append(best)
+        population_unique = population_pruned
+    # return list population below the maximum population and keeping the best of the best
+    return population_unique
+
+
+def save_statistics(population, optimization):
+    # obtained te fitness of individuals
+    fitness = [p["fitness"] for p in population]
+    # check if is max or min
+    if optimization == "Maximización":
+        worst = max(fitness)
+        best = min(fitness)
+    else:
+        best = min(fitness)
+        worst = max(fitness)
+    # calculate the average
+    average_evaluated = sum(fitness) / len(fitness)
+    individual_best = None
+    individual_worst = None
+    # obtained the individual (best and worst)
+    for p in population:
+        if p["fitness"] == best:
+            individual_best = p
+        if p["fitness"] == worst:
+            individual_worst = p
+    # returned statistic
+    return {"best": individual_best, "worst": individual_worst, "average": average_evaluated}
+
+
 def mutation(children, prob_mut_gen, prob_mut_ind, list_restaurants, geolocation, geolocation_municipality, type_food):
+    children_mutated = []
     for son in children:
         # check the probability of mutation of the individual that is better than prob_mut_ind
         if round(random.uniform(0, 1.0001), 4) >= prob_mut_ind:
             fitness = 0
+            list_restaurants_mutated = []
             for restaurant in son["restaurants"]:
                 # check the probability of mutation of each restaurant that is better than prob_mut_gen
                 if round(random.uniform(0, 1.0001), 4) >= prob_mut_gen:
@@ -43,19 +91,27 @@ def mutation(children, prob_mut_gen, prob_mut_ind, list_restaurants, geolocation
                         # obtained one restaurant randomly
                         rest = random.sample(list_restaurants, 1)[0]
                         # added fitness individual and distance in km
-                        rest["fitness_individual"], rest["distance_km"] = individual_evaluation_function(rest, geolocation, geolocation_municipality, type_food, list_restaurants)
+                        fitness_individual, distance_km = individual_evaluation_function(rest, geolocation,
+                                                                                         geolocation_municipality,
+                                                                                         type_food, list_restaurants)
+                        rest["fitness_individual"] = fitness_individual
+                        rest["distance_km"] = distance_km
                         # checked that restaurant of db not present in son["restaurants"]
                         if rest not in son["restaurants"]:
-                            repeated = True
-                            restaurant.update(rest)
+                            if rest not in list_restaurants_mutated:
+                                repeated = True
+                                restaurant = {**restaurant, **rest}
+                list_restaurants_mutated.append(restaurant)
                 fitness += restaurant["fitness_individual"]
-            # update fitness of individual (son) and the list of restaurants of son (son["restaurants"])
-            son.update({
+            son_mutated = {
                 "fitness": fitness,
-                "restaurants": son["restaurants"]
-            })
+                "restaurants": list_restaurants_mutated
+            }
+            # update fitness of individual (son) and the list of restaurants of son (son["restaurants"])
+            son = {**son, **son_mutated}
+        children_mutated.append(son)
     # returned the children mutated
-    return children
+    return children_mutated
 
 
 def cross(couples):
@@ -71,8 +127,8 @@ def cross(couples):
         fitness_sc = sum(restaurant["fitness_individual"] for restaurant in list_restaurants_sc)
         # add sons to list children
         children.append({
-            "fitness":fitness_fc,
-            "restaurants":list_restaurants_fc
+            "fitness": fitness_fc,
+            "restaurants": list_restaurants_fc
         })
         children.append({
             "fitness": fitness_sc,
@@ -97,19 +153,17 @@ def generation_couples(population, prob_cross):
 
 
 def calculate_distance(lat_rest, lng_rest, lat_person, lng_person):
-        # earth radius in kilometers
-        R = 6371
-
-        # haversine formula
-        phi1 = math.radians(lat_rest)
-        phi2 = math.radians(lat_person)
-        delta_phi = math.radians(lat_person - lat_rest)
-        delta_lambda = math.radians(lng_person - lng_rest)
-
-        a = math.sin(delta_phi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2) ** 2
-        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-        distance = R * c
-        return distance
+    # earth radius in kilometers
+    R = 6371
+    # haversine formula
+    phi1 = math.radians(lat_rest)
+    phi2 = math.radians(lat_person)
+    delta_phi = math.radians(lat_person - lat_rest)
+    delta_lambda = math.radians(lng_person - lng_rest)
+    a = math.sin(delta_phi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distance = R * c
+    return distance
 
 
 def individual_evaluation_function(restaurant, geolocation, geolocation_municipality, type_food, list_restaurants):
@@ -134,14 +188,18 @@ def individual_evaluation_function(restaurant, geolocation, geolocation_municipa
     if localization["status"]:
         if geolocation["status"]:
             # normalization from distance with logarithmic transformation
-            distance_km = calculate_distance(localization["lat"], localization["lng"], geolocation["lat"], geolocation["lng"])
-            distance_calculated = np.log(distance_km + 1)
-            distance = weight_location * distance_calculated
+            distance_km = calculate_distance(localization["lat"], localization["lng"], geolocation["lat"],
+                                             geolocation["lng"])
+            # distance_calculated = np.log(distance_km + 1)
+            # distance = weight_location * distance_calculated
+            distance = weight_location * distance_km
         elif geolocation_municipality["status"]:
             # normalization from distance with logarithmic transformation
-            distance_km = calculate_distance(localization["lat"], localization["lng"], geolocation["lat"], geolocation["lng"])
-            distance_calculated = np.log(distance_km + 1)
-            distance = weight_location * distance_calculated
+            distance_km = calculate_distance(localization["lat"], localization["lng"], geolocation["lat"],
+                                             geolocation["lng"])
+            # distance_calculated = np.log(distance_km + 1)
+            # distance = weight_location * distance_calculated
+            distance = weight_location * distance_km
         else:
             distance_km = None
             distance = 0
@@ -152,6 +210,7 @@ def individual_evaluation_function(restaurant, geolocation, geolocation_municipa
     if restaurant["food"] != type_food:
         weight_food = 0
     # return weighted sum and distance in km
+
     return weight_evaluation * evaluation + weight_rating * rating + weight_reservations * reservations + distance + weight_food + weight_frequency * frequency, distance_km
 
 
@@ -164,11 +223,13 @@ def generate_initial_population(list_restaurants, initial_population, recommenda
         # fitness global, individual and distance in km added
         fitness = 0
         for restaurant in list_restaurants_recommended:
-            restaurant["fitness_individual"], restaurant["distance_km"] = individual_evaluation_function(restaurant, geolocation,
-                                                                              geolocation_municipality,
-                                                                              type_food,
-                                                                              list_restaurants)
-            fitness += restaurant["fitness_individual"]
+            fitness_individual, distance_km = individual_evaluation_function(restaurant, geolocation,
+                                                                             geolocation_municipality,
+                                                                             type_food,
+                                                                             list_restaurants)
+            restaurant["fitness_individual"] = fitness_individual
+            restaurant["distance_km"] = distance_km
+            fitness += fitness_individual
         individual = {
             "fitness": fitness,
             "restaurants": list_restaurants_recommended[:]
@@ -188,26 +249,45 @@ def print_list(list_rest):
 def gar(list_restaurants, geolocation, geolocation_municipality, type_food, init_population, recommendations,
         max_population, prob_cross, prob_mut_gen, prob_mut_ind, iterations, opt):
     population_by_generation = {}
+    list_statistics_by_generation = []
     # generate initial population
     population = generate_initial_population(list_restaurants, init_population, recommendations, geolocation,
                                              geolocation_municipality, type_food)
-    print_list(population)
+    print("statistic 0")
     population_by_generation[0] = population
+    # save statistics from generation initial
+    statistics = save_statistics(population, opt)
+    print(statistics)
+    list_statistics_by_generation.append(statistics)
     population_copy = population
     for i in range(iterations):
         if len(population_copy) > 1:
             # generate couples
             print("couples")
             couples = generation_couples(population_copy, prob_cross)
-            print_list(couples)
+            # print_list(couples)
             # making crosses
             children = cross(couples)
             print("cross")
-            print_list(children)
+            # print_list(children)
             # do mutation
-            children_mutated = mutation(children, prob_mut_gen, prob_mut_ind, list_restaurants, geolocation, geolocation_municipality, type_food)
+            children_mutated = mutation(children, prob_mut_gen, prob_mut_ind, list_restaurants, geolocation,
+                                        geolocation_municipality, type_food)
             print("mutation")
-            print_list(children_mutated)
+            # print_list(children_mutated)
+            # add children to population
+            population_copy = population_copy + children_mutated
+            population_by_generation[i + 1] = population_copy
+            # save statistics
+            statistics = save_statistics(population_copy, opt)
+            list_statistics_by_generation.append(statistics)
+            print("statistics ", i + 1)
+            print(statistics)
+            # do pruning
+            population_pruned = pruning(population_copy, statistics["best"], max_population)
+            print("pruning")
+            population_copy = population_pruned
+    return population_copy, population_by_generation, list_statistics_by_generation
 
 
 def get_localization_by_municipality(municipality):
@@ -320,4 +400,15 @@ if __name__ == '__main__':
     # print(geolocation_municipality_by_geopy)
     print(geolocation)
 
-    gar(list_restaurants, geolocation, geolocation_municipality, type_food, 10, 3, 5, 0.25, 0.20, 0.35, 10, "max")
+    population, population_by_generation, statistics = gar(list_restaurants, geolocation, geolocation_municipality,
+                                                           type_food, 10, 3, 5, 0.25, 0.20, 0.35, 10,
+                                                           "Maximización")
+    print("------------------------------------------")
+    print("population")
+    print_list(population)
+    print("by generation")
+    for x in population_by_generation:
+        print(x)
+        print_list(population_by_generation[x])
+    print("statistics")
+    print_list(statistics)
