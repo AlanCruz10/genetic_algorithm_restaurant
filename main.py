@@ -7,7 +7,7 @@ from genetic_algorithm import generic_algorithm
 import csv
 import requests
 from configurations.google_maps.credentials.api_key import API_KEY
-# from configurations.geopy.credentials.user_agent import USER_AGENT
+from configurations.geopy.credentials.user_agent import USER_AGENT
 
 
 def read_data():
@@ -238,7 +238,7 @@ def get_localization_by_municipality(municipality):
 
 
 def get_localization_by_municipality_using_geopy(municipality):
-    geolocator = Nominatim(user_agent="mi-aplicacion-geolocalizacion")
+    geolocator = Nominatim(user_agent=USER_AGENT)
     geolocation_municipality = {}
     success = False
     attempts = 0
