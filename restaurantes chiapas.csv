@@ -1,0 +1,86 @@
+Name;Rating;Reservations;Frequency ;Evaluation;Location;Food
+Cockteles y Mariscos El Bucanero;4.50;6;6;4.6;Tuxtla Gutierrez;Pizza
+La Mansion 516;3.20;3;12;2.66;Tuxtla Gutierrez;Ensalada
+Asador Castellano;2.37;4;19;3.11;Tuxtla Gutierrez;Tofu
+Otilia;3.34;0;6;1.13;Tuxtla Gutierrez;Tofu
+Balam a Las Brasas;3.06;3;23;0.38;Tuxtla Gutierrez;Carnitas
+San Juan Leñero Asador;1.58;1;4;4.99;Tuxtla Gutierrez;Carnitas
+La Valentina;1.03;16;5;1.44;Tuxtla Gutierrez;Pescado
+Oa’xaka;1.00;14;4;4.82;Tuxtla Gutierrez;Mariscos
+Banderas Steak House;1.03;5;39;3.94;Tuxtla Gutierrez;Barbacoa
+Capriccio Divino;4.45;4;4;1.75;Tuxtla Gutierrez;Tofu
+Sarajevo Café Jardín;1.25;3;19;1.20;San Cristobal de las Casas ;Sopa
+Kinoki;0.18;11;4;0.73;San Cristobal de las Casas ;Carnitas
+Malaak al Horno;4.36;11;16;3.81;San Cristobal de las Casas ;Mariscos
+Tacos y Carnes Los Revolcados;0.13;17;19;1.52;San Cristobal de las Casas ;Pescado
+Nana Kutsi;0.07;4;39;4.12;San Cristobal de las Casas ;Curry
+Fátima17 Restaurante;1.64;0;9;4.52;San Cristobal de las Casas ;Pescado
+Fragola;3.18;3;22;1.36;San Cristobal de las Casas ;Pescado
+Naranja Central;4.48;10;56;3.80;San Cristobal de las Casas ;Sopa
+Veganos la Taquería;0.25;0;7;1.01;San Cristobal de las Casas ;Pizza
+Taniperla;3.98;4;81;3.71;San Cristobal de las Casas ;Fajitas
+Monte Verde Trattoria Pizzeria Italiana;0.68;0;22;0.08;Palenque;Pollo asado
+Restaurante Maya Cañada;0.61;17;22;1.63;Palenque;Pollo asado
+Restaurante Zanate Bar;4.12;1;27;4.72;Palenque;Carnitas
+Bajlum;0.80;6;4;4.35;Palenque;Arroz con pollo
+Restaurante El Centenario;1.26;2;62;3.25;Cintalapa;Arroz con pollo
+Azul Cielo Restaurante;2.30;17;41;1.19;Cintalapa;Carnitas
+Restaurant El Camarón Arrecho;4.99;2;64;0.23;Cintalapa;Pollo asado
+El Recuerdo;2.94;3;9;3.19;Cintalapa;Carnitas
+Ta Bonitío;3.68;8;15;2.92;Comitán;Sushi
+Sabores de Comitán;0.13;5;19;4.63;Comitán;Pollo asado
+Casa Nevarez;1.96;12;52;1.64;Comitán;Tacos
+Caoh;4.17;19;11;1.14;Comitán;Parrillada
+La Comiteca 1948;4.76;15;22;2.39;Comitán;Sopa
+LaLiLu;2.89;12;27;1.04;Comitán;Tacos
+La Esquina de Belisario;3.22;10;5;3.52;Comitán;Arroz con pollo
+Pizzería La Albahaca;4.52;0;13;3.78;Comitán;Empanadas
+El Sazón Comiteco Restaurant & Cenaduria;1.34;12;5;3.70;Comitán;Parrillada
+Restaurante Camino Secreto Marisquería;3.96;1;11;0.40;Comitán;Pollo asado
+El Picantito;4.04;1;45;4.87;Coita;Barbacoa
+Toni’s Taqueria;2.27;9;35;3.65;Coita;Parrillada
+Gorditas PACMAN;3.37;8;16;4.24;Coita;Sándwiches
+Cruz del Llano;4.57;7;74;2.09;Coita;Arroz con pollo
+ALETZA Ramen-Sushi-Snacks;4.80;10;51;1.79;Coita;Sándwiches
+Real Campestre Restaurant Familiar;2.54;8;4;4.64;Coita;Pizza
+La Cletta;1.00;14;10;2.22;Coita;Hamburguesas
+Tiobokki;1.79;11;6;1.46;Coita;Fajitas
+Pastelería Yireh;0.70;9;9;2.51;Coita;Hamburguesas
+Checo’s Pizzas;3.60;8;61;2.05;Coita;Pizza
+El Grajo;0.54;11;59;3.72;Tonalá;Hamburguesas
+Ahogadas Julio’s;2.24;14;29;0.12;Tonalá;Parrillada
+Mariscos Rafa;3.89;13;24;1.82;Tonalá;Hamburguesas
+El Filete Grill;1.70;2;43;2.44;Tonalá;Barbacoa
+La Cueva Del Nagual;1.11;9;5;4.47;Tonalá;Tofu
+Mariscos El Charro;1.60;10;20;1.48;Tonalá;Empanadas
+El Alazan y El Rosillo;2.41;9;9;2.27;Tonalá;Pescado
+Cinquecento Pizzeria;0.15;2;37;0.61;Tonalá;Pollo asado
+Mezquite Grill;2.37;15;27;4.61;Tonalá;Tofu
+Los Cocos Locos;1.83;3;6;4.47;Tonalá;Pescado
+El Campanario Restaurant;1.57;3;5;1.65;Chiapa de Corzo;Barbacoa
+LA SELVA;2.26;12;26;2.64;Chiapa de Corzo;Empanadas
+Jardínes de Chiapa Restaurante;2.71;17;17;1.04;Chiapa de Corzo;Barbacoa
+Villa Crepas;1.31;6;21;0.10;Chiapa de Corzo;Pescado
+Restaurant Continental;4.33;19;23;1.41;Huixtla;Curry
+KALAMARÍN;1.16;10;51;0.27;Huixtla;Barbacoa
+Casa Rosa;2.05;1;37;3.88;Huixtla;Parrillada
+Restaurante el BAMBU;3.17;1;86;3.77;Tapilula;Sushi
+Restaurante El Tio Napo;1.31;13;21;1.89;Tapilula;Tofu
+Restaurante Familiar El Yumbo;2.75;0;27;1.31;Tapilula;Ceviche
+Restaurante las quesadillas;0.28;4;13;4.86;Tapilula;Sopa
+Z'evia;2.06;10;56;4.40;Tapilula;Empanadas
+Restaurante La Palma;2.95;10;47;1.38;Solosuchiapa;Pizza
+Antojitos Konny;4.38;12;27;0.06;Solosuchiapa;Pasta
+Cocina Economica El Plebe;0.22;16;6;2.45;Solosuchiapa;Curry
+Restaurante La Parroquia;1.07;9;29;3.75;Solosuchiapa;Carnitas
+Cocína económica Laly;0.29;7;36;0.85;Solosuchiapa;Parrillada
+Taquitos Casa Blanca;2.88;9;7;1.47;Tuxtla Gutierrez;Tacos
+Las Pichanchas;1.48;2;13;1.83;Tuxtla Gutierrez;Hamburguesas
+Los Helechos;1.71;7;14;2.36;Tuxtla Gutierrez;Hamburguesas
+IHOP Tuxtla;2.58;8;18;2.08;Tuxtla Gutierrez;Curry
+La Calabaza Encantada;0.44;17;38;4.02;Tuxtla Gutierrez;Curry
+El Rincon De Josefina;4.45;12;12;2.23;Tuxtla Gutierrez;Mariscos
+Rizo Coctelerias;3.20;6;25;3.13;Tuxtla Gutierrez;Barbacoa
+La MI AMOR “Cocina con barrio”;4.80;3;29;4.81;Tuxtla Gutierrez;Carnitas
+Senorial Restaurant;4.67;4;16;2.76;Tuxtla Gutierrez;Sopa
+Chiquitita;1.07;4;23;0.73;Tuxtla Gutierrez;Parrillada
