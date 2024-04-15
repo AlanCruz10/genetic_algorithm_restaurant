@@ -8,9 +8,6 @@ from utilities.utlity import print_list
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
-municipality = None
-food = None
-entries = {}
 
 
 def relative_to_assets(path: str) -> Path:
@@ -18,37 +15,28 @@ def relative_to_assets(path: str) -> Path:
 
 
 window = Tk()
+window.title("Restaurant Selector")
+window.geometry("1230x720")
+window.configure(bg = "#FFFFFF")
 
-window.geometry("1112x702")
-window.configure(bg="#FFFFFF")
 
 canvas = Canvas(
     window,
-    bg="#FFFFFF",
-    height=702,
-    width=1112,
-    bd=0,
-    highlightthickness=0,
-    relief="ridge"
+    bg = "#FFFFFF",
+    height = 720,
+    width = 1230,
+    bd = 0,
+    highlightthickness = 0,
+    relief = "ridge"
 )
 
-canvas.place(x=0, y=0)
+canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
-    556.0,
-    351.0,
+    615.0,
+    360.0,
     image=image_image_1
-)
-
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_1 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: read_csv(),
-    relief="flat"
 )
 
 
@@ -78,21 +66,22 @@ def read_csv():
         print("Invalid file")
 
 
+
+# Dataset
+button_image_1 = PhotoImage(
+    file=relative_to_assets("button_1.png"))
+button_1 = Button(
+    image=button_image_1,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: read_csv(),
+    relief="flat"
+)
 button_1.place(
-    x=108.70184326171875,
-    y=117.0,
+    x=103.0,
+    y=174.0,
     width=142.69129943847656,
     height=32.084434509277344
-)
-
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
-button_2 = Button(
-    image=button_image_2,
-    borderwidth=0,
-    highlightthickness=45,
-    command=lambda: get_location(),
-    relief="flat"
 )
 
 
@@ -127,73 +116,55 @@ def get_location():
         entries["geolocation_municipality"] = ""
 
 
+# Dispositivo
+button_image_2 = PhotoImage(
+    file=relative_to_assets("button_2.png"))
+button_2 = Button(
+    image=button_image_2,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: get_location(),
+    relief="flat"
+)
 button_2.place(
-    x=37.0,
-    y=199.21107482910156,
+    x=146.0,
+    y=228.0,
     width=142.69129943847656,
     height=32.084434509277344
 )
 
-button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
-button_3 = Button(
-    image=button_image_3,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: get_type_food(),
-    relief="flat"
-)
 
-
-def get_type_food():
-    global food
-    unique_food = set()
-    unique_food.add("Otros")
-    if "list_restaurants" in entries.keys():
-        restaurants = entries["list_restaurants"]
-        if len(restaurants) > 0:
-            for r in restaurants:
-                if r["food"] not in unique_food:
-                    unique_food.add(r["food"])
-        else:
-            print("Select other data base to more type foods")
-    else:
-        print("Select data base to more type foods")
-    combobox = ttk.Combobox(window, width=24, state='readonly', values=list(unique_food))
-    food = combobox
-    combobox.place(
-        x=215.0,
-        y=267.0,
-        width=176.0,
-        height=32.0
-    )
-
-
-button_3.place(
-    x=215.0,
-    y=267.0,
-    width=176.0,
-    height=32.0
-)
-
-button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
-button_4 = Button(
-    image=button_image_4,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: get_data(),
-    relief="flat"
-)
+def obtain_data():
+    
+    '''
+        Pob. Inicial: entry_1
+        Pob.Maxima: entry_3
+        Iteraciones: entry_2
+        Prob.Cruza: entry_4
+        Mut. Ind: entry_5
+        Mut.Gen: entry_6
+    '''
+    
+    data = []
+    data.append(entry_1.get())
+    data.append(entry_2.get())
+    data.append(entry_3.get())
+    data.append(entry_4.get())
+    data.append(entry_5.get())
+    data.append(entry_6.get())
+    
+    for entry in data:
+        print(entry)
 
 
 def get_data():
     data_ok = True
     try:
         initial_population = int(entry_1.get().strip())
-        max_population = int(entry_2.get().strip())
-        str_prob_mut_ind = entry_3.get().strip()
-        str_prob_mut_gen = entry_4.get().strip()
+        max_population = int(entry_3.get().strip())
+        str_prob_mut_ind = entry_5.get().strip()
+        str_prob_mut_gen = entry_6.get().strip()
+        prob_cross = entry_4.get().strip()
         if str_prob_mut_ind.isdigit():
             prob_mut_ind = int(str_prob_mut_ind)
         else:
@@ -202,7 +173,7 @@ def get_data():
             prob_mut_gen = int(str_prob_mut_gen)
         else:
             prob_mut_gen = float(str_prob_mut_gen)
-        iterations = int(entry_5.get().strip())
+        iterations = int(entry_2.get().strip())
         if initial_population < 2:
             print("Population initial can't be less that two")
             data_ok = False
@@ -242,7 +213,7 @@ def get_data():
                                                                                             geolocation_municipality,
                                                                                             type_food,
                                                                                             initial_population,
-                                                                                            3, max_population, 0.25,
+                                                                                            3, max_population, prob_cross,
                                                                                             prob_mut_gen,
                                                                                             prob_mut_ind, iterations,
                                                                                             "Minimizacion")
@@ -260,23 +231,29 @@ def get_data():
         print("Data can't be str or null")
 
 
-
-button_4.place(
-    x=71.0,
-    y=629.0,
+# Resolver
+button_image_3 = PhotoImage(
+    file=relative_to_assets("button_3.png"))
+button_3 = Button(
+    image=button_image_3,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: get_data(),
+    relief="flat"
+)
+button_3.place(
+    x=149.0,
+    y=580.0,
     width=114.0,
     height=32.0
 )
 
-button_image_5 = PhotoImage(
-    file=relative_to_assets("button_5.png"))
-button_5 = Button(
-    image=button_image_5,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: get_municipalities(),
-    relief="flat"
-)
+# button_3.place(
+#     x=149.0,
+#     y=620.0,
+#     width=114.0,
+#     height=32.0
+# )
 
 
 def get_municipalities():
@@ -292,20 +269,73 @@ def get_municipalities():
     combobox = ttk.Combobox(window, width=24, state='readonly', values=municipalities)
     municipality = combobox
     combobox.place(
-        x=202.48812866210938,
-        y=199.21107482910156,
+        x=323.0,
+        y=228.0,
         width=142.69129943847656,
         height=32.084434509277344
     )
 
 
-button_5.place(
-    x=202.48812866210938,
-    y=199.21107482910156,
+# Municipio
+button_image_4 = PhotoImage(
+    file=relative_to_assets("button_4.png"))
+button_4 = Button(
+    image=button_image_4,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: get_municipalities(),
+    relief="flat"
+)
+button_4.place(
+    x=323.0,
+    y=228.0,
     width=142.69129943847656,
     height=32.084434509277344
 )
 
+
+def get_type_food():
+    global food
+    unique_food = set()
+    unique_food.add("Otros")
+    if "list_restaurants" in entries.keys():
+        restaurants = entries["list_restaurants"]
+        if len(restaurants) > 0:
+            for r in restaurants:
+                if r["food"] not in unique_food:
+                    unique_food.add(r["food"])
+        else:
+            print("Select other data base to more type foods")
+    else:
+        print("Select data base to more type foods")
+    combobox = ttk.Combobox(window, width=24, state='readonly', values=list(unique_food))
+    food = combobox
+    combobox.place(
+        x=295.0,
+        y=174.0,
+        width=176.0,
+        height=32.0
+    )
+
+
+# Tipo de comida
+button_image_5 = PhotoImage(
+    file=relative_to_assets("button_5.png"))
+button_5 = Button(
+    image=button_image_5,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: get_type_food(),
+    relief="flat"
+)
+button_5.place(
+    x=295.0,
+    y=174.0,
+    width=176.0,
+    height=32.0
+)
+
+# Graficar
 button_image_6 = PhotoImage(
     file=relative_to_assets("button_6.png"))
 button_6 = Button(
@@ -316,17 +346,70 @@ button_6 = Button(
     relief="flat"
 )
 button_6.place(
-    x=216.0,
-    y=629.0,
+    x=294.0,
+    y=580.0,
     width=125.0,
     height=32.0
 )
 
+# button_6.place(
+#     x=294.0,
+#     y=620.0,
+#     width=125.0,
+#     height=32.0
+# )
+
+
+image_image_2 = PhotoImage(
+    file=relative_to_assets("image_2.png"))
+image_2 = canvas.create_image(
+    294.0,
+    607.0,
+    image=image_image_2
+)
+
+
+# # Minimización
+# button_image_7 = PhotoImage(
+#     file=relative_to_assets("button_7.png"))
+# button_7 = Button(
+#     image=button_image_7,
+#     borderwidth=0,
+#     highlightthickness=0,
+#     command=lambda: print("button_7 clicked"),
+#     relief="flat"
+# )
+# button_7.place(
+#     x=292.0,
+#     y=540.0,
+#     width=137.0,
+#     height=32.0
+# )
+
+# # Maximización
+# button_image_8 = PhotoImage(
+#     file=relative_to_assets("button_8.png"))
+# button_8 = Button(
+#     image=button_image_8,
+#     borderwidth=0,
+#     highlightthickness=0,
+#     command=lambda: print("button_8 clicked"),
+#     relief="flat"
+# )
+
+
+# button_8.place(
+#     x=133.0,
+#     y=540.0,
+#     width=137.0,
+#     height=32.0
+# )
+
 entry_image_1 = PhotoImage(
     file=relative_to_assets("entry_1.png"))
 entry_bg_1 = canvas.create_image(
-    248.5,
-    341.5,
+    198.0,
+    309.5,
     image=entry_image_1
 )
 entry_1 = Entry(
@@ -336,17 +419,17 @@ entry_1 = Entry(
     highlightthickness=0
 )
 entry_1.place(
-    x=196.0,
-    y=328.0,
-    width=105.0,
+    x=163.0,
+    y=296.0,
+    width=70.0,
     height=25.0
 )
 
 entry_image_2 = PhotoImage(
     file=relative_to_assets("entry_2.png"))
 entry_bg_2 = canvas.create_image(
-    246.5,
-    393.5,
+    198.0,
+    377.5,
     image=entry_image_2
 )
 entry_2 = Entry(
@@ -356,17 +439,17 @@ entry_2 = Entry(
     highlightthickness=0
 )
 entry_2.place(
-    x=194.0,
-    y=380.0,
-    width=105.0,
+    x=163.0,
+    y=364.0,
+    width=70.0,
     height=25.0
 )
 
 entry_image_3 = PhotoImage(
     file=relative_to_assets("entry_3.png"))
 entry_bg_3 = canvas.create_image(
-    256.5,
-    449.5,
+    441.5,
+    309.5,
     image=entry_image_3
 )
 entry_3 = Entry(
@@ -376,17 +459,17 @@ entry_3 = Entry(
     highlightthickness=0
 )
 entry_3.place(
-    x=204.0,
-    y=436.0,
-    width=105.0,
+    x=408.0,
+    y=296.0,
+    width=67.0,
     height=25.0
 )
 
 entry_image_4 = PhotoImage(
     file=relative_to_assets("entry_4.png"))
 entry_bg_4 = canvas.create_image(
-    261.5,
-    517.5,
+    467.5,
+    377.5,
     image=entry_image_4
 )
 entry_4 = Entry(
@@ -396,17 +479,17 @@ entry_4 = Entry(
     highlightthickness=0
 )
 entry_4.place(
-    x=209.0,
-    y=504.0,
-    width=105.0,
+    x=423.0,
+    y=364.0,
+    width=89.0,
     height=25.0
 )
 
 entry_image_5 = PhotoImage(
     file=relative_to_assets("entry_5.png"))
 entry_bg_5 = canvas.create_image(
-    242.5,
-    577.5,
+    229.0,
+    449.5,
     image=entry_image_5
 )
 entry_5 = Entry(
@@ -417,8 +500,28 @@ entry_5 = Entry(
 )
 entry_5.place(
     x=190.0,
-    y=564.0,
-    width=105.0,
+    y=436.0,
+    width=78.0,
+    height=25.0
+)
+
+entry_image_6 = PhotoImage(
+    file=relative_to_assets("entry_6.png"))
+entry_bg_6 = canvas.create_image(
+    505.5,
+    449.5,
+    image=entry_image_6
+)
+entry_6 = Entry(
+    bd=0,
+    bg="#FFFFFF",
+    fg="#000716",
+    highlightthickness=0
+)
+entry_6.place(
+    x=473.0,
+    y=436.0,
+    width=65.0,
     height=25.0
 )
 
