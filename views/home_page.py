@@ -1,5 +1,10 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Button, PhotoImage, filedialog, ttk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+import matplotlib.pyplot as plt
+import os
+from tkinter import *
+import mplcursors
 import csv
 import requests
 from genetic_algorithm import genetic_algorithm_restaurant
@@ -8,6 +13,10 @@ from utilities.utlity import print_list
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
+municipality = None
+list_statistics = None
+food = None
+entries = {}
 
 
 def relative_to_assets(path: str) -> Path:
@@ -157,7 +166,46 @@ def obtain_data():
         print(entry)
 
 
+def draw_graphic_fitness_by_generation():
+    global list_statistics
+    if list_statistics is not None:
+        output_folder = 'graphics/statistics/'
+        os.makedirs(output_folder, exist_ok=True)
+
+        iterations_for_graphic = list(range(0, len(list_statistics)))
+
+        bests = [s["best"]['fitness'] for s in list_statistics]
+        worsts = [s["worst"]['fitness'] for s in list_statistics]
+        averages = [s["average"] for s in list_statistics]
+
+        fig, ax = plt.subplots(figsize=(10, 5), dpi=55)
+        # ,  , marker='s' , marker='o'
+        ax.plot(iterations_for_graphic, bests, label='Mejores resultados', marker='^', linestyle='-')
+        ax.plot(iterations_for_graphic, worsts, label='Peores resultados', marker='s', linestyle='--',
+                color='orange')
+        ax.plot(iterations_for_graphic, averages, label='Promedio', marker='o', linestyle='-.',
+                color='green')
+        ax.set_xticks(range(len(iterations_for_graphic)), labels=iterations_for_graphic, rotation=30)
+        ax.set_title('Evolucion de la aptitud')
+        ax.set_xlabel('Generaciones')
+        ax.set_ylabel('Fitness')
+        ax.legend(loc='upper left',  bbox_to_anchor=(1, 1))
+        filename = os.path.join(output_folder, 'graphics_statistics.png')
+        fig.savefig(filename)
+        mplcursors.cursor(hover=True)
+        canvas_figure = FigureCanvasTkAgg(fig, master=window)
+        canvas_figure.draw()
+        canvas_figure_widget = canvas_figure.get_tk_widget()
+        canvas_figure_widget.place(x=617.5, y=35)
+        toolbar = NavigationToolbar2Tk(canvas_figure, window)
+        toolbar.zoom(10)
+        toolbar.place(x=2000, y=0)
+    else:
+        print("Statistic Data not found")
+
+
 def get_data():
+    global list_statistics
     data_ok = True
     try:
         initial_population = int(entry_1.get().strip())
@@ -226,7 +274,7 @@ def get_data():
                 print_list(population_by_generation[x])
             print("statistics")
             print_list(statistics)
-
+            list_statistics = statistics
     except (ValueError, Exception) as e:
         print("Data can't be str or null")
 
@@ -342,7 +390,7 @@ button_6 = Button(
     image=button_image_6,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_6 clicked"),
+    command=lambda: draw_graphic_fitness_by_generation(),
     relief="flat"
 )
 button_6.place(
