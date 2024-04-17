@@ -45,8 +45,8 @@ def individual_evaluation_function(restaurant, geolocation, geolocation_municipa
             distance = weight_location * distance_km
         elif geolocation_municipality["status"]:
             # normalization from distance with logarithmic transformation
-            distance_km = calculate_distance(restaurant["lat"], restaurant["lng"], geolocation["lat"],
-                                             geolocation["lng"])
+            distance_km = calculate_distance(restaurant["lat"], restaurant["lng"], geolocation_municipality["lat"],
+                                             geolocation_municipality["lng"])
             # distance_calculated = np.log(distance_km + 1)
             # distance = weight_location * distance_calculated
             distance = weight_location * distance_km

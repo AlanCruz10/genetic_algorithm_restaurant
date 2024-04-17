@@ -1,5 +1,5 @@
 from pathlib import Path
-from tkinter import Tk, Canvas, Entry, Button, PhotoImage, filedialog, ttk
+from tkinter import Tk, Canvas, Entry, Button, PhotoImage, filedialog, ttk, Label
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
 import os
@@ -8,6 +8,7 @@ import mplcursors
 import csv
 import requests
 from genetic_algorithm import genetic_algorithm_restaurant
+from utilities.geolocation.geolocation import get_localization_by_municipality_using_geopy
 from utilities.utlity import print_list
 
 
@@ -212,7 +213,17 @@ def get_data():
         max_population = int(entry_3.get().strip())
         str_prob_mut_ind = entry_5.get().strip()
         str_prob_mut_gen = entry_6.get().strip()
-        prob_cross = entry_4.get().strip()
+        # prob_cross = entry_4.get().strip()
+
+        # print("initial_population:", initial_population)
+        # print("max_population:", max_population)
+        # print("str_prob_mut_ind:", str_prob_mut_ind)
+        # print("str_prob_mut_gen:", str_prob_mut_gen)
+        # print("prob_cross:", prob_cross)
+        # print("Entry: ", entries)
+        # print("Municipio: ", municipality.get())
+        
+        
         if str_prob_mut_ind.isdigit():
             prob_mut_ind = int(str_prob_mut_ind)
         else:
@@ -229,13 +240,20 @@ def get_data():
             print("Iterations can't be less that one")
             data_ok = False
         if "geolocation" not in entries and municipality is None:
+            data_ok = False
+        elif not entries["geolocation"]["status"] and (municipality.get() == "" or municipality.get() == "Select"):
             print("Select location")
             data_ok = False
-        elif entries["geolocation"] == {} and (municipality.get() == "" or municipality.get() == "Select"):
-            print("Select location")
-            data_ok = False
-        elif entries["geolocation"] == {} and (municipality.get() != "" or municipality.get() != "Select"):
-            entries["geolocation_municipality"] = municipality.get()
+        elif not entries["geolocation"]["status"] and (municipality.get() != "" and municipality.get() != "Select"):
+            geo_munic = get_localization_by_municipality_using_geopy(municipality.get())
+            if geo_munic["status"]:
+                entries["geolocation_municipality"] = {"status":geo_munic["status"],
+                                                    "municipality":municipality.get(),
+                                                    "lat": geo_munic["lat"],
+                                                    "lng": geo_munic["lng"],}
+            else:
+                print("location undefined, try again or select other location")
+                data_ok = False
         else:
             if not entries["geolocation"]["status"]:
                 print("location undefined, try again or select other location")
@@ -261,21 +279,47 @@ def get_data():
                                                                                             geolocation_municipality,
                                                                                             type_food,
                                                                                             initial_population,
-                                                                                            3, max_population, prob_cross,
+                                                                                            3, max_population, 0,
                                                                                             prob_mut_gen,
                                                                                             prob_mut_ind, iterations,
                                                                                             "Minimizacion")
-            print("------------------------------------------")
-            print("population")
-            print_list(population)
-            print("by generation")
-            for x in population_by_generation:
-                print(x)
-                print_list(population_by_generation[x])
-            print("statistics")
-            print_list(statistics)
+            # print("------------------------------------------")
+            # print("population")
+            # print_list(population)
+            # print("by generation")
+            # for x in population_by_generation:
+            #     print(x)
+            #     print_list(population_by_generation[x])
             list_statistics = statistics
-    except (ValueError, Exception) as e:
+            print("statistics ->")
+            x = 640
+            for i, restaurant in enumerate(sorted(statistics[-1]['best']['restaurants'], key=lambda x: x['fitness_individual'])):
+                if (i < 2):
+                    restaurant_info = f"Recomendación: {i+1}\nNombre: {restaurant['name']}\nEvaluacion del servicio: {restaurant["evaluation"]}\nRating: {restaurant['rating']}\nUbicación: {restaurant['location']}\nDistancia en Km: {str(round(restaurant["distance_km"], 4))}\nTipo de comida: {restaurant['food']}"
+                    label = Label(window, text=restaurant_info, padx=10, pady=10)
+                    label.place(
+                        x=x,
+                        y=400
+                    )
+                    x += 250
+                else:
+                    restaurant_info = f"Recomendación: {i+1}\nNombre: {restaurant['name']}\nEvaluacion del servicio: {restaurant["evaluation"]}\nRating: {restaurant['rating']}\nUbicación: {restaurant['location']}\nDistancia en Km: {str(round(restaurant["distance_km"], 4))}\nTipo de comida: {restaurant['food']}"
+                    label = Label(window, text=restaurant_info, padx=10, pady=10)
+                    label.place(
+                        x=770,
+                        y=560
+                    )
+            
+    except (ValueError) as e:
+        label = Label(
+            text="Texto",
+            bg="#FFFFFF",
+            fg="#000000"
+        )
+        label.place(
+            x=600,
+            y=500
+        )
         print("Data can't be str or null")
 
 
@@ -307,9 +351,11 @@ button_3.place(
 def get_municipalities():
     global municipality
     if "geolocation" in entries.keys():
-        entries["geolocation"] = {}
+        entries["geolocation"] = {"status":False}
+    else:
+        entries["geolocation"] = {"status":False}
     municipalities = ["Select"]
-    with open('C:\\Users\\exala\\Documents\\proyectos\\projects-8\\python\\genetic_algorithm_restaurant\\municipios.csv', newline='', encoding='utf-8') as archivo_csv:
+    with open('.\municipios.csv', newline='', encoding='utf-8') as archivo_csv:
         lector_csv = csv.reader(archivo_csv)
         for i, fila in enumerate(lector_csv):
             if i != 0:

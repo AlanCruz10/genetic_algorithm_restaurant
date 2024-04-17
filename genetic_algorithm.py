@@ -16,6 +16,7 @@ def genetic_algorithm_restaurant(list_restaurants, geolocation, geolocation_muni
     # generate initial population
     population = generate_initial_population(restaurants, init_population, recommendations, geolocation,
                                              geolocation_municipality, type_food)
+    print("Individuo -> ", population[0])
     print("statistic 0")
     population_by_generation[0] = population
     # save statistics from generation initial
