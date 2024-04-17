@@ -2,6 +2,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Button, PhotoImage, filedialog, ttk, Label
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
+import random
 import os
 from tkinter import *
 import mplcursors
@@ -9,8 +10,7 @@ import csv
 import requests
 from genetic_algorithm import genetic_algorithm_restaurant
 from utilities.geolocation.geolocation import get_localization_by_municipality_using_geopy
-from utilities.utlity import print_list
-
+#from utilities.utlity import print_list
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
@@ -27,20 +27,19 @@ def relative_to_assets(path: str) -> Path:
 window = Tk()
 window.title("Restaurant Selector")
 window.geometry("1230x720")
-window.configure(bg = "#FFFFFF")
-
+window.configure(bg="#FFFFFF")
 
 canvas = Canvas(
     window,
-    bg = "#FFFFFF",
-    height = 720,
-    width = 1230,
-    bd = 0,
-    highlightthickness = 0,
-    relief = "ridge"
+    bg="#FFFFFF",
+    height=720,
+    width=1230,
+    bd=0,
+    highlightthickness=0,
+    relief="ridge"
 )
 
-canvas.place(x = 0, y = 0)
+canvas.place(x=0, y=0)
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
@@ -74,7 +73,6 @@ def read_csv():
     except (FileNotFoundError, UnicodeDecodeError, Exception, TypeError) as e:
         entries["list_restaurants"] = list_restaurants
         print("Invalid file")
-
 
 
 # Dataset
@@ -145,7 +143,6 @@ button_2.place(
 
 
 def obtain_data():
-    
     '''
         Pob. Inicial: entry_1
         Pob.Maxima: entry_3
@@ -154,7 +151,7 @@ def obtain_data():
         Mut. Ind: entry_5
         Mut.Gen: entry_6
     '''
-    
+
     data = []
     data.append(entry_1.get())
     data.append(entry_2.get())
@@ -162,7 +159,7 @@ def obtain_data():
     data.append(entry_4.get())
     data.append(entry_5.get())
     data.append(entry_6.get())
-    
+
     for entry in data:
         print(entry)
 
@@ -190,7 +187,7 @@ def draw_graphic_fitness_by_generation():
         ax.set_title('Evolucion de la aptitud')
         ax.set_xlabel('Generaciones')
         ax.set_ylabel('Fitness')
-        ax.legend(loc='upper left',  bbox_to_anchor=(1, 1))
+        ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
         filename = os.path.join(output_folder, 'graphics_statistics.png')
         fig.savefig(filename)
         mplcursors.cursor(hover=True)
@@ -222,8 +219,7 @@ def get_data():
         # print("prob_cross:", prob_cross)
         # print("Entry: ", entries)
         # print("Municipio: ", municipality.get())
-        
-        
+
         if str_prob_mut_ind.isdigit():
             prob_mut_ind = int(str_prob_mut_ind)
         else:
@@ -247,10 +243,10 @@ def get_data():
         elif not entries["geolocation"]["status"] and (municipality.get() != "" and municipality.get() != "Select"):
             geo_munic = get_localization_by_municipality_using_geopy(municipality.get())
             if geo_munic["status"]:
-                entries["geolocation_municipality"] = {"status":geo_munic["status"],
-                                                    "municipality":municipality.get(),
-                                                    "lat": geo_munic["lat"],
-                                                    "lng": geo_munic["lng"],}
+                entries["geolocation_municipality"] = {"status": geo_munic["status"],
+                                                       "municipality": municipality.get(),
+                                                       "lat": geo_munic["lat"],
+                                                       "lng": geo_munic["lng"], }
             else:
                 print("location undefined, try again or select other location")
                 data_ok = False
@@ -292,24 +288,43 @@ def get_data():
             #     print_list(population_by_generation[x])
             list_statistics = statistics
             print("statistics ->")
-            x = 640
+            menu_items = [
+                "- Pizza de pepperoni",
+                "- Ensalada César",
+                "- Sushi variado",
+                "- Tacos al pastor",
+                "- Pasta Alfredo",
+                "- Sopa de tomate",
+                "- Sandwich de pavo",
+                "- Filete",
+                "- Hamburguesa",
+                "- Burrito de carne asada",
+                "- Pollo a la parrilla",
+                "- Tarta de queso",
+                "- Paella mixta",
+                "- Ceviche de camarón",
+                "- Rollos de primavera",
+                "- Costillas a la barbacoa",
+                "- Mariscada",
+                "- Ternera a la italiana",
+                "- Fajitas de pollo",
+            ]
+
+            x = 590
             for i, restaurant in enumerate(sorted(statistics[-1]['best']['restaurants'], key=lambda x: x['fitness_individual'])):
-                if (i < 2):
-                    restaurant_info = f"Recomendación: {i+1}\nNombre: {restaurant['name']}\nEvaluacion del servicio: {restaurant["evaluation"]}\nRating: {restaurant['rating']}\nUbicación: {restaurant['location']}\nDistancia en Km: {str(round(restaurant["distance_km"], 4))}\nTipo de comida: {restaurant['food']}"
-                    label = Label(window, text=restaurant_info, padx=10, pady=10)
-                    label.place(
-                        x=x,
-                        y=400
-                    )
-                    x += 250
-                else:
-                    restaurant_info = f"Recomendación: {i+1}\nNombre: {restaurant['name']}\nEvaluacion del servicio: {restaurant["evaluation"]}\nRating: {restaurant['rating']}\nUbicación: {restaurant['location']}\nDistancia en Km: {str(round(restaurant["distance_km"], 4))}\nTipo de comida: {restaurant['food']}"
-                    label = Label(window, text=restaurant_info, padx=10, pady=10)
-                    label.place(
-                        x=770,
-                        y=560
-                    )
-            
+                random_menu_items = random.sample(menu_items, 5)
+                menu_info = "Menu:\n" + "\n".join(random_menu_items)
+                print("_______________________")
+                print(f"Recomendación: {i + 1}\nNombre: {restaurant['name']}\nEvaluacion del servicio: {restaurant["evaluation"]}\nRating: {restaurant['rating']}\nUbicación: {restaurant['location']}\nDistancia en Km: {str(round(restaurant["distance_km"], 4))}\nTipo de comida: {restaurant['food']} \n\n{menu_info}")
+
+                restaurant_info = f"Recomendación: {i + 1}\nNombre: {restaurant['name']}\nEvaluacion del servicio: {restaurant["evaluation"]}\nRating: {restaurant['rating']}\nUbicación: {restaurant['location']}\nDistancia en Km: {str(round(restaurant["distance_km"], 4))}\nTipo de comida: {restaurant['food']} \n\n{menu_info}"
+                label = Label(window, text=restaurant_info, padx=10, pady=10)
+                label.place(
+                    x=x,
+                    y=382
+                )
+                x += 215
+
     except (ValueError) as e:
         label = Label(
             text="Texto",
@@ -340,20 +355,13 @@ button_3.place(
     height=32.0
 )
 
-# button_3.place(
-#     x=149.0,
-#     y=620.0,
-#     width=114.0,
-#     height=32.0
-# )
-
 
 def get_municipalities():
     global municipality
     if "geolocation" in entries.keys():
-        entries["geolocation"] = {"status":False}
+        entries["geolocation"] = {"status": False}
     else:
-        entries["geolocation"] = {"status":False}
+        entries["geolocation"] = {"status": False}
     municipalities = ["Select"]
     with open('.\municipios.csv', newline='', encoding='utf-8') as archivo_csv:
         lector_csv = csv.reader(archivo_csv)
@@ -462,6 +470,13 @@ image_2 = canvas.create_image(
     image=image_image_2
 )
 
+image_image_3 = PhotoImage(
+    file=relative_to_assets("image_3.png"))
+image_3 = canvas.create_image(
+    892.0,
+    530.0,
+    image=image_image_3
+)
 
 # # Minimización
 # button_image_7 = PhotoImage(
