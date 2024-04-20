@@ -17,6 +17,7 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 municipality = None
 list_statistics = None
 food = None
+label_result = None
 entries = {}
 
 
@@ -203,22 +204,18 @@ def draw_graphic_fitness_by_generation():
 
 
 def get_data():
-    global list_statistics
+    global list_statistics, label_result
+
+    if label_result is not None:
+        label_result.destroy()
+        label_result = None
+
     data_ok = True
     try:
         initial_population = int(entry_1.get().strip())
         max_population = int(entry_3.get().strip())
         str_prob_mut_ind = entry_5.get().strip()
         str_prob_mut_gen = entry_6.get().strip()
-        # prob_cross = entry_4.get().strip()
-
-        # print("initial_population:", initial_population)
-        # print("max_population:", max_population)
-        # print("str_prob_mut_ind:", str_prob_mut_ind)
-        # print("str_prob_mut_gen:", str_prob_mut_gen)
-        # print("prob_cross:", prob_cross)
-        # print("Entry: ", entries)
-        # print("Municipio: ", municipality.get())
 
         if str_prob_mut_ind.isdigit():
             prob_mut_ind = int(str_prob_mut_ind)
@@ -278,16 +275,10 @@ def get_data():
                                                                                             3, max_population, 0,
                                                                                             prob_mut_gen,
                                                                                             prob_mut_ind, iterations,
-                                                                                            "Minimizacion")
-            # print("------------------------------------------")
-            # print("population")
-            # print_list(population)
-            # print("by generation")
-            # for x in population_by_generation:
-            #     print(x)
-            #     print_list(population_by_generation[x])
+                                                                                            "Maximizacion")
+
             list_statistics = statistics
-            print("statistics ->")
+
             menu_items = [
                 "- Pizza de pepperoni",
                 "- Ensalada César",
@@ -310,33 +301,33 @@ def get_data():
                 "- Fajitas de pollo",
             ]
 
-            x = 590
+            x = 588
             for i, restaurant in enumerate(sorted(statistics[-1]['best']['restaurants'], key=lambda x: x['fitness_individual'])):
                 random_menu_items = random.sample(menu_items, 5)
                 menu_info = "Menu:\n" + "\n".join(random_menu_items)
-                print("_______________________")
-                print(f"Recomendación: {i + 1}\nNombre: {restaurant['name']}\nEvaluacion del servicio: {restaurant["evaluation"]}\nRating: {restaurant['rating']}\nUbicación: {restaurant['location']}\nDistancia en Km: {str(round(restaurant["distance_km"], 4))}\nTipo de comida: {restaurant['food']} \n\n{menu_info}")
 
-                restaurant_info = f"Recomendación: {i + 1}\nNombre: {restaurant['name']}\nEvaluacion del servicio: {restaurant["evaluation"]}\nRating: {restaurant['rating']}\nUbicación: {restaurant['location']}\nDistancia en Km: {str(round(restaurant["distance_km"], 4))}\nTipo de comida: {restaurant['food']} \n\n{menu_info}"
-                label = Label(window, text=restaurant_info, padx=10, pady=10)
-                label.place(
+                restaurant_info = f"Recomendación: {i + 1}\n\nNombre: {check_length_and_break(restaurant['name'])}\nEvaluacion del servicio: {check_length_and_break(str(restaurant['evaluation']))}\nRating: {check_length_and_break(str(round(restaurant['rating'])))}\nUbicación: {check_length_and_break(restaurant['location'])}\nDistancia en Km: {check_length_and_break(str(round(restaurant['distance_km'], 4)))}\nTipo de comida: {check_length_and_break(restaurant['food'])} \n\n{menu_info}"
+
+                label_result = Label(window, text=restaurant_info, padx=10, pady=10)
+                label_result.place(
                     x=x,
                     y=382
                 )
-                x += 215
+
+                x += 212
 
     except (ValueError) as e:
-        label = Label(
-            text="Texto",
-            bg="#FFFFFF",
-            fg="#000000"
-        )
-        label.place(
-            x=600,
-            y=500
-        )
         print("Data can't be str or null")
 
+
+def check_length_and_break(element):
+    if len(element) > 15:
+        words = element.split(' ')
+        if len(words) >= 3:
+            words.insert(2, '\n')
+        return ' '.join(words)
+    else:
+        return element
 
 # Resolver
 button_image_3 = PhotoImage(

@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def save_statistics(population, optimization):
     # obtained the fitness of individuals
     fitness = [p["fitness"] for p in population]
